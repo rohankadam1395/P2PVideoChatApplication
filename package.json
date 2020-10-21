@@ -1,0 +1,23 @@
+{
+  "name": "p2pvideochatapplication",
+  "version": "1.0.0",
+  "description": "freeCodeCamp Take Home Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rohankadam1395/P2PVideoChatApplication.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rohankadam1395/P2PVideoChatApplication/issues"
+  },
+  "homepage": "https://github.com/rohankadam1395/P2PVideoChatApplication#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6"
+  }
+}

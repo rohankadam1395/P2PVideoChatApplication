@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title>P2P Video Chat</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content=""> -->
+<!-- 
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" href="icon.png"> -->
+  <!-- Place favicon.ico in the root directory -->
+<!-- 
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css"> -->
+
+  <!-- <meta name="theme-color" content="#fafafa"> -->
+</head>
+
+<body>
+
+  <p>Hello world! This is HTML5 Boilerplate.</p>
+  <video autoplay></video>
+  <button id="captureVideo">Capture Video</button>
+  <button id="stop">Stop</button>
+
+ <script>
+   var capturevideo=document.getElementById("captureVideo");
+   var stop=document.getElementById("stop");
+
+   capturevideo.onclick=function(){
+    var video=document.querySelector("video");
+    var a=navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
+      window.stream=stream;
+video.srcObject=stream;
+    });
+   }
+
+   stop.onclick=function(){
+    // console.log(window);
+    // console.log(window.stream);
+     console.log(window.stream.getTracks());
+     window.stream.getTracks().forEach(track => {
+       console.log(track);
+      //  element.stop();
+      track.stop();
+     });
+   }
+    
+ </script>
+  
+</body>
+
+</html>
