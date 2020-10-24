@@ -26,35 +26,35 @@ app.listen(port,()=>{
     console.log(`Listening on port ${port}`);
 }); 
 
-// var io=socket(server);
+var io=socket(server);
 
 
-// io.on('connection',(socket)=>{
-//     console.log("A user connected");
-//     // console.log(socket);
-//     socket.on('disconnect',()=>{
-//         console.log("User Disconnected");
-//     });
-//     socket.on('chat message',(msg)=>{
-//         console.log(msg);
-//         io.emit('chat message',msg);
-//     });
+io.on('connection',(socket)=>{
+    console.log("A user connected");
+    // console.log(socket);
+    socket.on('disconnect',()=>{
+        console.log("User Disconnected");
+    });
+    socket.on('chat message',(msg)=>{
+        console.log(msg);
+        io.emit('chat message',msg);
+    });
 
 
-//     socket.on('offer',(offer)=>{
-//         // console.log("Got Offer");
-//         // console.log(offer);
-//         socket.broadcast.emit('offer',offer);
-//     });
+    socket.on('offer',(offer)=>{
+        // console.log("Got Offer");
+        // console.log(offer);
+        socket.broadcast.emit('offer',offer);
+    });
 
-//     socket.on('answer',(answer)=>{
-//         // console.log("Got Answer");
-//         // console.log(answer);
-//         socket.broadcast.emit('answer',answer);
-//     })
+    socket.on('answer',(answer)=>{
+        // console.log("Got Answer");
+        // console.log(answer);
+        socket.broadcast.emit('answer',answer);
+    })
 
-//     socket.on('candidate',(candidate)=>{
-//         console.log("Cndidate Received on server now enitting");
-//         socket.broadcast.emit(candidate);
-//     })
-// })
+    socket.on('candidate',(candidate)=>{
+        console.log("Cndidate Received on server now enitting");
+        socket.broadcast.emit(candidate);
+    })
+})
