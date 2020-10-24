@@ -3,7 +3,6 @@ const path=require('path');
 const app=express();
 
 var socket=require('socket.io');
-let port=process.env.PORT | 5000;
 
 if(process.env.NODE_ENV==='production'){
     console.log("Its Production");
@@ -18,6 +17,10 @@ if(process.env.NODE_ENV==='production'){
 
 
 // var server=
+app.get("/",(req,res)=>{
+    res.send("hello there");
+})
+let port=process.env.PORT || 5000;
 
 app.listen(port,()=>{
     console.log(`Listening on port ${port}`);
