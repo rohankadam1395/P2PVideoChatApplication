@@ -7,6 +7,7 @@ let port=process.env.PORT | 5000;
 
 
 app.get('*',(req,res)=>{
+    console.log("Sending Html File");
     res.sendFile(path.resolve(__dirname,"index.html"));
 })
 
