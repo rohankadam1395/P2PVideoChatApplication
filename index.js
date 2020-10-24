@@ -5,7 +5,9 @@ const app=express();
 var socket=require('socket.io');
 let port=process.env.PORT | 5000;
 
-
+if(process.env.NODE_ENV==='production'){
+    console.log("Its Production");
+}
 app.get('*',(req,res)=>{
     console.log("Sending Html File");
     res.sendFile(path.resolve(__dirname,"index.html"));
