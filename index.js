@@ -3,24 +3,27 @@ const path=require('path');
 const app=express();
 
 var socket=require('socket.io');
+app.use(express.static(path.join(__dirname,'public')));
 
 if(process.env.NODE_ENV==='production'){
     console.log("Its Production");
-    app.use(express.static(path.resolve(__dirname,'index.html')));
-    app.use(express.static(path.resolve(__dirname,'socket.io')));
+
 
     app.get('*',(req,res)=>{
-        console.log("Sending Html File");
+        console.log("S  ending Html File");
         res.sendFile(path.resolve(__dirname,"index.html"));
     })
 }
 
 
 // var server=
-app.get("/",(req,res)=>{
-    res.send("hello there");
+
+
+app.get('*',(req,res)=>{
+    console.log("Sending Html File");
+    res.sendFile(path.resolve(__dirname,"index.html"));
 })
-let port=process.env.PORT || 5000;
+let port=process.env.PORT || 5000;  
 
 let server=app.listen(port,()=>{
     console.log(`Listening on port ${port}`);
@@ -50,11 +53,12 @@ io.on('connection',(socket)=>{
     socket.on('answer',(answer)=>{
         // console.log("Got Answer");
         // console.log(answer);
+        
         socket.broadcast.emit('answer',answer);
     })
 
-    socket.on('candidate',(candidate)=>{
-        console.log("Cndidate Received on server now enitting");
-        socket.broadcast.emit(candidate);
-    })
+    // socket.on('candidate',(candidate)=>{
+    //     console.log("Cndidate Received on server now enitting");
+    //     socket.broadcast.emit(candidate);
+    // })
 })

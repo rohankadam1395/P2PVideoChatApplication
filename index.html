@@ -7,180 +7,63 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-#chatFrame{
-  width: 500px;
-  height: 300px;
-  background-color: cornsilk;
-}
-video{
-border: solid 2px black;
-}
-  </style>
+  <link rel="stylesheet" href="/assets/index.css">
+
 </head>
 
 <body>
+  <div id="root">
+<div id="header">
+  <h2>Hello world! This is HTML5 Boilerplate.</h2>
+</div>
+<div id="middle">
 
-  <p>Hello world! This is HTML5 Boilerplate.</p>
-  <video autoplay></video>
-  <video id="video2" autoplay></video>
-
-  <button id="captureVideo">Capture Video</button>
-  <button id="stop">Stop</button>
-<button id="remote">Remote</button>
- <script>
-
-   
-    
- </script>
-  <div>
+<div id="chat">
+  <div id="chat-header">
     <h1>
       Chat App
     </h1>
-    <div id="chatFrame">
-      <ul id="chatDisplay">
-
-      </ul>
-    </div>
-    <input id="msgToSend" type="text"/><button onclick="sendMsg()">Send</button>
-   
   </div>
+  <div id="chatFrame">
+    <ul id="chatDisplay">
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    var socket = io();
-    sendMsg=()=>{
+    </ul>
+  </div>
+  <div id="chat-footer">
+    <input id="msgToSend" type="text" />
+    <button onclick="sendMsg()">Send</button>
+  </div>
+  
 
-var input=document.getElementById("msgToSend").value;
-//console.log("Sending "+input);
-socket.emit('chat message',input);
+</div>
+<div id="videosection">
+  <div id="local-video">
+    <h3>Local</h3>
+    <video autoplay></video>
 
+  </div>
+  <div id="remote-video">
+    <h3>Remote</h3>
+    <video id="video2" autoplay></video>
+  </div>
+</div>
+</div>
 
-   }
+   <div id="controls">
 
-   
-socket.on('chat message',(msg)=>{
-  //console.log(msg);
-var li=document.createElement("li");
-li.textContent=msg;
-var ul=document.getElementById("chatDisplay");
-ul.appendChild(li);
+    <button id="captureVideo">Capture Video</button>
+    <button id="stop">Stop</button>
+    <button id="remote">Remote</button>
 
-})
-
-
-// ***********************************************************************
-
-var capturevideo=document.getElementById("captureVideo");
-   var stop=document.getElementById("stop");
-   var remote=document.getElementById("remote");
-   var video2=document.getElementById("video2");
-   var video=document.querySelector("video");
-   let desc;
-
-let pc=new RTCPeerConnection();
-
-//console.log("new pc created");
-//console.log(pc);
-
-
-pc.ontrack=(event)=>{
-  //console.log("Received track");
-  //console.log(event); 
-  if(video2.srcObject) return ;
-    video2.srcObject=event.streams[0];
-}
-
-
-start=()=>{
-let stream=navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
-stream.getTracks().forEach(track => {
-  pc.addTrack(track,stream);
-});
-video.srcObject=stream;
-  });
-
-}
-capturevideo.onclick=()=>{
-start();
+   </div>
 
   
-}
-pc.onicecandidate=(candidate)=>{
-  //console.log("Ice Candidate");
-  //console.log(candidate);
-  socket.emit('candidate',candidate);
-};
-pc.onnegotiationneeded=()=>{
-  //console.log("Negotiation needed");
-  pc.createOffer().then((e)=>{
-  //console.log("Offer Cretaed");
-  //console.log(e);
-  pc.setLocalDescription(e).then(()=>{
-    //console.log("After Setting Local Description");
-    //console.log(pc);
-    socket.emit('offer',e);
-  })
-});
 
 
+  </div>
+  <script src="/assets/socket.io.js"></script>
+  <script src="/assets/script.js"></script>
 
-}
-
-
-socket.on('offer',(offer)=>{
-  //console.log("Got Offer From Server");
-  //console.log(offer);
-
-  pc.setRemoteDescription(offer).then(()=>{
-
-    //console.log("Remote Description Set");
-    //console.log(pc);
-    let  stream= navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
-      //console.log("Stream?????");
-    // //console.log(stream);
-      stream.getTracks().forEach((track)=>{
-        pc.addTrack(track,stream);
-      })
-    })
-    pc.createAnswer().then((e)=>{
-//console.log("Answer Created");
-//console.log(e);
-      pc.setLocalDescription(e).then(()=>{
-        //console.log("Local Description Set");
-        //console.log(pc);
-        //console.log("Emitting the Answer");
-        socket.emit('answer',e);
-      })
-    })
-  })
-});
-
-socket.on('answer',(answer)=>{
-  //console.log("Answer Received");
-  //console.log(answer);
-  //console.log("Setting Remote Description as answer");
-  //console.log(pc);
-
-  pc.setRemoteDescription(answer).then(()=>{
-    //console.log("Affter Setting Remote Description");
-    //console.log(pc);  
-  }).catch((err)=>{
-    //console.log(err);
-  });
-})
-
-socket.on('candidate',(candidate)=>{
-pc.addIceCandidate(candidate);
-});
-
-   
-
-
-
-
-
-  </script>
 </body>
 
 </html>
