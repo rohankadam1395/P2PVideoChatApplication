@@ -7,18 +7,20 @@ html,body{
     /* background-color: green; */
     margin: 0;
 max-width: 100vw;
-height: 100vh;
 min-height: 100vh;
+    height: 100vh;
+
 }
 
 #root{
     text-align: center;
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
+    justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
+    overflow: scroll;
 }
 
 h1,h2,h3{
@@ -28,23 +30,32 @@ h1,h2,h3{
 height: 10%;
 width: 100%;
 }
+
+#chatApp{
+}
 button{
     /* margin: 0;
     padding: 0; */
 }
 #chat-footer{
-height: 10%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+min-height: 10%;
 width: 100%;
 }
 #chatFrame{
+    overflow: auto;
     height: 80%;
     width: 100%;
         background-color: cornsilk;
   }
   video{
-    border: solid 2px black;
+    border: solid 1px black ;
   width: 100%;
   height: 90%;
+  /* object-fit: fill; */
   }
 
   div{
@@ -86,41 +97,73 @@ height: 80%;
   #local-video{
       height: 50%;
       width: 100%;
+      /* border: 1px solid greenyellow; */
   }
   #remote-video{
     height: 50%;
     width: 100%;
+    /* border: 1px solid greenyellow; */
+
 
 }
 
   #header{
-      height: 10%;
+      min-height: 10%;
   }
   #controls{
     height: 10%;
-}
+    width: 80%;
+    /* border: 1px solid black; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    }
+    
+    #msgToSend{
+        width: 80%;
+                /* height: 100%; */
+    }
+
+   #video-header{
+height: 10%;
+    }
+
 
 @media(max-width:320px){
-   
-    #middle{
-
-        flex-direction: column;
-      align-items: center ;
-        background-color: salmon;
-        width: 100%;
+    #msgToSend{
+        height: 50%;
 
     }
-    #chat{
-        border: 2px solid black;
+    #btnSend{
+        height: 50%;
+        line-height: 0.5em;
+    }
+#root{
+
+}
+
+#chatApp {
+    font-size: large;
+}
+#video-header{
+    font-size: smaller;
+}
+#chat-header{
+    /* border: 1px solid black; */
+}
+#middle{
+    flex-direction: column;
 width: 100%;
-   }
+}
 
-   #videosection{
-       width: 100%;
-       border: 2px solid black;
+#chat{
+    width: 100%;
+    height: 50%;
+}
 
-
-   }
-  
-
+#videosection{
+    width: 100%;
+    height: 50%;
+}
     }

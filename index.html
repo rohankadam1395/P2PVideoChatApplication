@@ -20,7 +20,7 @@
 
 <div id="chat">
   <div id="chat-header">
-    <h1>
+    <h1 id="chatApp">
       Chat App
     </h1>
   </div>
@@ -31,19 +31,19 @@
   </div>
   <div id="chat-footer">
     <input id="msgToSend" type="text" />
-    <button onclick="sendMsg()">Send</button>
+    <button id="btnSend" onclick="sendMsg()">Send</button>
   </div>
   
 
 </div>
 <div id="videosection">
   <div id="local-video">
-    <h3>Local</h3>
+    <h3 id="video-header">Local</h3>
     <video autoplay></video>
 
   </div>
   <div id="remote-video">
-    <h3>Remote</h3>
+    <h3 id="video-header">Remote</h3>
     <video id="video2" autoplay></video>
   </div>
 </div>
