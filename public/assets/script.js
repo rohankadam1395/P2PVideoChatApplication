@@ -1,10 +1,37 @@
 
-document.addEventListener("DOMContentLoaded",()=>{
-    console.log("Content Loaded");
-    start();
-  })
+  let capturevideo=document.getElementById("captureVideo");
+  let stop=document.getElementById("stop");
+  let remote=document.getElementById("remote");
+  let video2=document.getElementById("video2");
+  let video=document.getElementById("video");
+  let desc;
+  let pc=new RTCPeerConnection();
+
+  console.log("new pc created");
+  console.log(pc);
+
+
+  start=()=>{
+    console.log("start"); 
+  navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
+    window.stream=stream;
+    console.log(stream);
+  stream.getTracks().forEach(track => {
+    pc.addTrack(track,stream);
+  });
+  console.log(video);
+  video.srcObject=stream;
+    });
   
-      var socket = io();
+  }
+  
+document.addEventListener("DOMContentLoaded",()=>{
+  console.log("Content Loaded");
+  start();
+});
+
+  
+     var socket = io();
       sendMsg=()=>{
   
   var input=document.getElementById("msgToSend").value;
@@ -27,12 +54,6 @@ document.addEventListener("DOMContentLoaded",()=>{
   
   // ***********************************************************************
   
-  var capturevideo=document.getElementById("captureVideo");
-     var stop=document.getElementById("stop");
-     var remote=document.getElementById("remote");
-     var video2=document.getElementById("video2");
-     var video=document.querySelector("video");
-     let desc;
   
   
   stop.onclick=()=>{
@@ -41,10 +62,7 @@ document.addEventListener("DOMContentLoaded",()=>{
    })
   }
   
-  let pc=new RTCPeerConnection();
   
-  console.log("new pc created");
-  console.log(pc);
   
   
   pc.ontrack=(event)=>{
@@ -55,17 +73,6 @@ document.addEventListener("DOMContentLoaded",()=>{
       video2.srcObject=event.streams[0];
   }
   
-  
-  start=()=>{
-  let stream=navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
-    window.stream=stream;
-  stream.getTracks().forEach(track => {
-    pc.addTrack(track,stream);
-  });
-  video.srcObject=stream;
-    });
-  
-  }
   
   capturevideo.onclick=()=>{
   start();
@@ -147,7 +154,6 @@ document.addEventListener("DOMContentLoaded",()=>{
   // });
   
      
-  
   
   
   

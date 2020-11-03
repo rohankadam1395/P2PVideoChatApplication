@@ -8,6 +8,20 @@ h1,h2,h3{
 }
 
 video{
-    height: 100px;
-    width: 100px;
+        max-height:100%; 
+    max-width: 100%; 
+}
+
+ul{
+
+}
+
+li{
+    display: list-item;
+list-style: none;
+text-align: left;
+background-color: wheat;
+border: solid black 2px;
+margin: 0.5em;
+/* border-radius: 25px; */
 }
