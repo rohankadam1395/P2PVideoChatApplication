@@ -32,13 +32,13 @@ document.addEventListener("DOMContentLoaded",()=>{
 
   
      var socket = io();
-      sendMsg=()=>{
-  
-  var input=document.getElementById("msgToSend").value;
-  console.log("Sending "+input);
-  socket.emit('chat message',input);
-  
-  
+      sendMsg=(event)=>{
+  event.preventDefault();
+  var input=document.getElementById("msgToSend");
+  console.log("Sending "+input.value);
+  socket.emit('chat message',input.value);
+  input.value="";
+  input.focus();
      }
   
      
