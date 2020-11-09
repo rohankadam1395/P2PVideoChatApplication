@@ -10,41 +10,41 @@
     integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
   <link rel="stylesheet" href="/assets/index.css">
+  <link rel="stylesheet" href="/fa/css/font-awesome.min.css">
+
+
   <script src="/assets/socket.io.js"></script>
 </head>
 
 <body>
-  <div class="root container-fluid text-center">
-    <div id="row1" class="row border" style="min-height: 10%;">
-      <div class="col-md-12 col-sm-12 col-12">
-        <h2>P2P Video Chat Application</h2>
-      </div>
+
+  <div class="h-100 fluid-container text-center " style="min-height: 100%;">
+    <div class=" mr-0 ml-0 row border justify-content-center align-items-center" style="min-height:10%;">
+      <h2>P2P Video Chat Application</h2>
     </div>
-    <div id="row2" class="row border  align-items-stretch" style="min-height:80%;">
-
-
-      <div id="chat" class="col-md-6 col-sm-6 col-6 border border-danger" style="min-height:100%;">
-
-        <div id="chat-header" class="row border justify-content-center border border-danger" style="min-height: 10%;">
+    <div class="mr-0 ml-0 row border justify-content-center align-items-stretch" style="height: 80%;">
+      <div id="chat" class=" col-md-6 col-sm-6 col-6" style="height: 100%;">
+        <div class="row justify-content-center" style="min-height: 10%;">
           <h3 class="mb-0" id="chatApp">
             Chat App
           </h3>
         </div>
-        <div id="chatFrame" class="row bord er border border-primary" style="min-height: 80%;">
-          <ul id="chatDisplay">
+        <div id="chatFrame" class="row border border-primary" style="min-height: 80%;">
+          <ul id="chatDisplay" class="list-group w-100 align-items-start justify-content-end">
 
           </ul>
         </div>
         <div id="chat-footer" class="row border align-items-center justify-content-center border border-info"
           style="min-height:10%;">
-          <form class="w-100 row form border border-danger align-items-center" onsubmit="sendMsg(event)"
-            style="min-height:100%;background-color: green;">
+          <form class="w-100 row form border border-danger align-items-center justify-content-start"
+            onsubmit="sendMsg(event)" style="height:100%;">
 
             <div class="form-group col-md-6 col-sm-6 col-6 mb-0 pl-0  pr-0 border border-danger">
-              <input class="form-control" id="msgToSend" type="text" />
+              <input class="form-control" id="msgToSend" type="text" required />
             </div>
 
-            <button type="submit" id="btnSend" class="btn btn-primary btn col-md-6 col-sm-6 col-6">Send</button>
+            <button type="submit" id="btnSend" class="btn btn-primary btn col-md-6 col-sm-6 col-6"><i
+                class="fa fa-paper-plane" aria-hidden="true"></i></button>
 
 
 
@@ -53,50 +53,36 @@
 
         </div>
 
-      </div>
-
-      <div id="videosection" class="col-md-6 col-sm-6 col-6 border border-danger" style="min-height:100%;">
-
-        <div id="local-video" class="row border border-primary flex-column  align-items-center " style="min-height:50%;">
-
-          <div class="row" style="min-height: 10%;">
-            <h3 id="video-header">Local</h3>
-
-          </div>
-          <div class="mw-100 row border justify-content-center" style="min-height: 90%;">
-            <video id="video" autoplay class="border "style="min-height:100%;"></video>
-            </div>
-
-
-
-
-
-
-        </div>
-
-        <div id="remote-video" class="row border flex-column border-danger align-items-center " style="min-height:50%;">
-
-          <div class="row" style="min-height: 10%;">
-            <h3 id="video-header">Remote</h3>
-          </div>
-          <div class="mw-100 row border justify-content-center" style="min-height: 90%;">
-            <video id="video2" autoplay class="border" style="min-height:100%;"></video>
-          </div>
-
-        </div>
-
-
-
 
 
       </div>
-      
+
+      <div id="videosection" class=" col-md-6 col-sm-6 col-6" style="height: 100%;">
+
+        <div class="row justify-content-center" style=" height: 100%;">
+
+          <div class="border row justify-content-center align-items-center" style="height:50%;width:90%;">
+
+            <video id="video" class="border" autoplay style="max-height: 100%; max-width: 100%;"></video>
+
+          </div>
+          <div class="border row justify-content-center align-items-center" style="height:50%;width:90%;">
+            <video id="video2" class="border" autoplay style="max-height: 100%; max-width: 100%;"></video>
+          </div>
+        </div>
+
+
+      </div>
+
     </div>
-    <div id="row3" class="row border border-danger align-items-center justify-content-center" style="min-height: 10%;">
-
-      <button id="captureVideo" class="btn btn-primary">Capture Video</button>
-      <button id="stop" class="btn btn-danger">Stop</button>
+    <div class="mr-0 ml-0 row border justify-content-center align-items-center" style="min-height: 10%;">
+      <button id="captureVideo" class="btn btn-primary"><i class="fa fa-video-camera" aria-hidden="true"></i></button>
+      <button id="stop" class="btn btn-danger"><i class="fa fa-stop-circle-o" aria-hidden="true"></i> </button>
       <button id="remote" class="btn btn-info">Remote</button>
+
+
+
+
 
     </div>
 
