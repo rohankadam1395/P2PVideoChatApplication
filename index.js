@@ -37,10 +37,21 @@ let rooms=[];
 io.on('connection',(socket)=>{
     //console.log("A user connected");
     // //console.log(socket);
+
     socket.on("room",(room)=>{
+        let count=0;
+        if(io.sockets.adapter.rooms[room]){
+            console.log(io.sockets.adapter.rooms[room].length);
+            count=io.sockets.adapter.rooms[room].length;
+        }
+if(count<2){
+    socket.join(room);
+
+}else{
+    socket.emit("cantjoin","Room is Full");
+}
 console.log(room);
 // rooms.push(room);
-socket.join(room);
     });
 
     
@@ -50,9 +61,15 @@ socket.join(room);
 
     socket.on('chat message',(id,msg)=>{
         console.log(msg +" msg");
-        console.log(socket.rooms);
 console.log(id+" id ");
-        io.to(id).emit('chat message',msg);
+if(id){
+    console.log("Id is true");
+    io.to(id).emit('chat message',msg);
+
+}else{
+    console.log("Id is false");
+socket.emit("chat message","Talking with yourself ? Join a room");
+}
     });
 
 

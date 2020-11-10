@@ -11,12 +11,26 @@ let room="";
   //console.log("new pc created");
   //console.log(pc);
 
+  promptRoom=()=>{
+    room=window.prompt("Enter Room Number","");
+return room;
+  }
 
   start=()=>{
    
     console.log("start"); 
 
   navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
+
+    room=promptRoom();
+    console.log(room+" room");
+    while(room==null || room==""){
+      console.log("Enter Room no");
+  window.alert("Empty Not Allowed");
+  room=promptRoom();
+    }
+  socket.emit("room",room);
+
     window.stream=stream;
     //console.log(stream);
   stream.getTracks().forEach(track => {
@@ -25,25 +39,22 @@ let room="";
 // console.log(video);
 // console.log(stream);
   video.srcObject=stream;
+    }).catch((err)=>{
+window.alert(err);
     });
   
   }
   
-  promptRoom=()=>{
-    room=window.prompt("Enter Room Number","");
-return room;
-  }
+ 
 
 document.addEventListener("DOMContentLoaded",()=>{
-   room=promptRoom();
-  console.log(room+" room");
-  while(room==null || room==""){
-    console.log("Enter Room no");
-window.alert("Empty Not Allowed");
-room=promptRoom();
-  }
   console.log("Content Loaded");
-socket.emit("room",room);
+// if(navigator.mediaDevices){
+//   window.alert("Device Present");
+//   let result=navigator.mediaDevices.getUserMedia();
+//   window.alert(result);
+// }
+  
   start();
 });
 
@@ -127,7 +138,10 @@ socket.emit("room",room);
   
   }
   
-  
+  socket.on("cantjoin",(msg)=>{
+    console.log(msg);
+    window.alert(msg);
+  })
   socket.on('offer',(offer)=>{
     //console.log("Got Offer From Server");
     //console.log(offer);

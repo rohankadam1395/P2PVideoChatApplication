@@ -1,6 +1,7 @@
 html,body{
     height: 100%;
     max-width: 100vw;
+
 }
 
 video{
@@ -16,4 +17,7 @@ li{
 overflow-y: scroll;
 }
 
+ul{
+    /* overflow-y: scroll; */
+}
 
