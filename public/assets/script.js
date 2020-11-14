@@ -1,78 +1,85 @@
 
-  let capturevideo=document.getElementById("captureVideo");
-  let stop=document.getElementById("stop");
-  let remote=document.getElementById("remote");
-  let video2=document.getElementById("video2");
-  let video=document.getElementById("video");
-  let desc;
-  let pc=new RTCPeerConnection();
-  var socket = io();
-let room="";
-  //console.log("new pc created");
-  //console.log(pc);
+document.addEventListener("DOMContentLoaded", () => {
 
-  promptRoom=()=>{
-    room=window.prompt("Enter Room Number","");
-return room;
-  }
-
-  start=()=>{
-   
-    console.log("start"); 
-
-  navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
-
-    room=promptRoom();
-    console.log(room+" room");
-    while(room==null || room==""){
-      console.log("Enter Room no");
-  window.alert("Empty Not Allowed");
-  room=promptRoom();
+let capturevideo = document.getElementById("captureVideo");
+let stop = document.getElementById("stop");
+let video2 = document.getElementById("video2");
+let video = document.getElementById("video");
+let configuration = {
+  'iceServers': [
+    {
+      'urls': 'stun:stun.l.google.com:19302'
     }
-  socket.emit("room",room);
+  ]
+}
+let pc = new RTCPeerConnection();
+var socket = io();
+let room = "";
+//console.log("new pc created");
+//console.log(pc);
 
-    window.stream=stream;
+promptRoom = () => {
+  room = window.prompt("Enter Room Number", "");
+  return room;
+}
+
+start = () => {
+
+  console.log("start");
+
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+
+    room = promptRoom();
+    console.log(room + " room");
+    while (room == null || room == "") {
+      console.log("Enter Room no");
+      window.alert("Empty Not Allowed");
+      room = promptRoom();
+    }
+
+    socket.emit("room", room);
+
+    // window.stream = stream;
     //console.log(stream);
-  stream.getTracks().forEach(track => {
-    pc.addTrack(track,stream);
-  });
-// console.log(video);
-// console.log(stream);
-  video.srcObject=stream;
-    }).catch((err)=>{
-window.alert(err);
+    stream.getTracks().forEach(track => {
+      console.log("Adding tracks");
+      pc.addTrack(track, stream);
     });
-  
-  }
-  
- 
+    // console.log(video);
+    // console.log(stream);
+    video.srcObject = stream;
+  }).catch((err) => {
+    window.alert(err);
+  });
 
-document.addEventListener("DOMContentLoaded",()=>{
+}
+
+
+start();
+
   console.log("Content Loaded");
-// if(navigator.mediaDevices){
-//   window.alert("Device Present");
-//   let result=navigator.mediaDevices.getUserMedia();
-//   window.alert(result);
-// }
-  
-  start();
-});
+  // if(navigator.mediaDevices){
+  //   window.alert("Device Present");
+  //   let result=navigator.mediaDevices.getUserMedia();
+  //   window.alert(result);
+  // }
 
-  
-      sendMsg=(event)=>{
+
+
+sendMsg = (event) => {
   event.preventDefault();
-  var input=document.getElementById("msgToSend");
+  var input = document.getElementById("msgToSend");
   //console.log("Sending "+input.value);
-  socket.emit('chat message',room,input.value);
-  input.value="";
+  socket.emit('chat message', room, input.value);
+  input.value = "";
   input.focus();
-     }
-  
-     
-  socket.on('chat message',(msg)=>{
-    //console.log(msg);
-  var li=document.createElement("li");
-  li.textContent=msg;
+}
+
+
+socket.on('chat message', (msg) => {
+  //console.log(msg);
+  var li = document.createElement("li");
+  li.textContent = msg;
   li.classList.add("list-group-item");
 
   li.classList.add("list-group-item-success");
@@ -80,118 +87,169 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 
 
-  var ul=document.getElementById("chatDisplay");
+  var ul = document.getElementById("chatDisplay");
   ul.appendChild(li);
-  
-  })
-  
-  
-  // ***********************************************************************
-  
-  
-  
-  stop.onclick=()=>{
-   window.stream.getTracks().forEach((track)=>{
-     track.stop();
-   })
+
+})
+
+
+// ***********************************************************************
+// let cands=[];
+pc.onicecandidate = (event) => {
+  console.log("Ice Candidate");
+  // console.log(event.candidate);
+  let candidate=event.candidate;
+  if(!candidate){
+    console.log("All Candidates Generated ");
+    console.log("****************");
+return ;
   }
+//Emit candidates when other person has joined the room
+  socket.emit('candidate', room,candidate);
+
+};
+
+pc.onnegotiationneeded = () => {
+
+
+  console.log("Negotiation needed");
   
-  
-  
-  
-  pc.ontrack=(event)=>{
-    //console.log("Received track");
-    //console.log(event); 
-    if(video2.srcObject) return ;
-    //console.log("Video 2 is set ______");
-      video2.srcObject=event.streams[0];
-  }
-  
-  
-  capturevideo.onclick=()=>{
-  start();
-  
-    
-  }
-  
-  // pc.onicecandidate=(candidate)=>{
-  //   //console.log("Ice Candidate");
-  //   //console.log(candidate);
-  //   socket.emit('candidate',candidate);
-  // };
-  
-  pc.onnegotiationneeded=()=>{
-  
-    
-    //console.log("Negotiation needed");
-    pc.createOffer().then((e)=>{
-    //console.log("Offer Cretaed");
-    //console.log(e);
-    pc.setLocalDescription(e).then(()=>{
-      //console.log("After Setting Local Description");
-      //console.log(pc);
-      socket.emit('offer',room,e);
-    })
-  });
-  
-  
-  
-  }
-  
-  socket.on("cantjoin",(msg)=>{
-    console.log(msg);
-    window.alert(msg);
-  })
-  socket.on('offer',(offer)=>{
-    //console.log("Got Offer From Server");
-    //console.log(offer);
-    
-  
-  
-    pc.setRemoteDescription(offer).then(()=>{
-  
-      //console.log("Remote Description Set");
-      //console.log(pc);
-      let  stream= navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
-        //console.log("Stream?????");
-      // //console.log(stream);
-        stream.getTracks().forEach((track)=>{
-          pc.addTrack(track,stream);
-        })
-      })
-      pc.createAnswer().then((e)=>{
-  //console.log("Answer Created");
-  //console.log(e);
-        pc.setLocalDescription(e).then(()=>{
-          //console.log("Local Description Set");
-          //console.log(pc);
-          //console.log("Emitting the Answer");
-          socket.emit('answer',room,e);
-        })
-      })
-    })
-  });
-  
-  socket.on('answer',(answer)=>{
-    //console.log("Answer Received");
-    //console.log(answer);
-    //console.log("Setting Remote Description as answer");
-    //console.log(pc);
-  
-    pc.setRemoteDescription(answer).then(()=>{
-      //console.log("Affter Setting Remote Description");
-      //console.log(pc);  
-    }).catch((err)=>{
-      //console.log(err);
+  pc.createOffer().then((e) => {
+    // console.log("Offer Cretaed");
+    // console.log(e);
+    pc.setLocalDescription(e).then(() => {
+      // console.log("After Setting Local Description");
+      // console.log(pc);
+      console.log("Local description set Not Ice candidate should start");
+        socket.emit('offer', room, e);
+      
     });
+  }).catch((err)=>{
+    console.log(err);
   })
+
+}
+
+
+
+
+
+stop.onclick = () => {
+  let stream=video.srcObject;
+  stream.getTracks().forEach((track) => {
+    track.stop();
+  })
+}
+
+
+
+
+pc.ontrack = (event) => {
+  console.log("On track");
+  //console.log(event); 
+  if (video2.srcObject) return;
+  //console.log("Video 2 is set ______");
+  video2.srcObject = event.streams[0];
+}
+
+
+capturevideo.onclick = () => {
+  start();
+
+
+}
+
+
+socket.on("cantjoin", (msg) => {
+  console.log(msg);
+  window.alert(msg);
+})
+socket.on('offer', (offer) => {
+  console.log("Got Offer From Server");
+  // console.log(offer);
+
+  // if(!pc.remoteDescription){
+
+if(!pc.remoteDescription){
+
+  pc.setRemoteDescription(offer).then(() => {
+
+    console.log("Remote Description Set");
+    // console.log(pc);
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+      // console.log("Stream?????");
+      // //console.log(stream);4
+      stream.getTracks().forEach((track) => {
+        console.log("Addng tracks");
+        pc.addTrack(track, stream);
+      });
+
+      pc.createAnswer().then((e) => {
+        // console.log("Answer Created");
+        // console.log(e);
+        pc.setLocalDescription(e).then(() => {
+          // console.log("Local Description Set");
+          // console.log(pc);
+          console.log("Emitting the Answer");
   
-  // socket.on('candidate',(candidate)=>{
-  // pc.addIceCandidate(candidate);
-  // });
+          socket.emit('answer', room, e);
   
-     
+        });
+
+      
+      });
   
-  
-  
-  
+
+    });
+
+    
+
+  });
+
+}
+
+  // }else{
+  //   console.log("Remote Description Already Set in offer Received");
+  // }
+
+});
+
+socket.on('answer', (answer) => {
+  console.log("Answer Received");
+  // console.log(answer);
+  // console.log("Setting Remote Description as answer");
+  // console.log(pc);
+
+  if(!pc.remoteDescription){
+
+  pc.setRemoteDescription(answer).then(() => {
+    console.log("Affter Setting Remote Description");
+
+    // console.log(pc);  
+  }).catch((err) => {
+    //console.log(err);
+  });
+
+}
+  // }else{
+  //   console.log("Remote Description Already Set in the Anser Received")
+  // }
+})
+
+socket.on('candidate',  (candidate) => {
+  console.log("Receibed from server canditate ");
+  // console.log(candidate);
+  if(pc.remoteDescription){
+      pc.addIceCandidate(candidate);
+
+  }
+
+  }
+);
+
+
+
+
+
+});

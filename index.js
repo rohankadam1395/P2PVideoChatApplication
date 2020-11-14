@@ -74,8 +74,8 @@ socket.emit("chat message","Talking with yourself ? Join a room");
 
 
     socket.on('offer',(id,offer)=>{
-        // //console.log("Got Offer");
-        // //console.log(offer);
+        // console.log("Got Offer");
+        // console.log(offer);
         // socket.broadcast.emit('offer',offer);
         socket.to(id).emit('offer',offer);
 
@@ -88,10 +88,17 @@ socket.emit("chat message","Talking with yourself ? Join a room");
         // socket.broadcast.emit('answer',answer);
         socket.to(id).emit('answer',answer);
 
-    })
+    });
 
-    // socket.on('candidate',(candidate)=>{
-    //     //console.log("Cndidate Received on server now enitting");
-    //     socket.broadcast.emit(candidate);
-    // })
+let cand=[];
+    socket.on('candidate',(id,candidate)=>{
+        
+        console.log("Cndidate Received on server now enitting");
+        // socket.broadcast.emit(candidate);
+        console.log(candidate);
+        cand.push(candidate);   
+        console.log(cand.length);
+        socket.to(id).emit('candidate',candidate);
+
+    });
 })
