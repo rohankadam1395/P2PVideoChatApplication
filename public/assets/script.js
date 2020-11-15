@@ -159,6 +159,8 @@ pc.onconnectionstatechange=()=>{
   if(pc.connectionState==='disconnected'){
     console.log("Disconncted");
     video2.srcObject=null;
+    pc.localDescription=null;
+    pc.remoteDescription=null;
 
   }
 
