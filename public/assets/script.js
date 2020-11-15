@@ -48,6 +48,13 @@ createSendOffer=()=>{
 
 
 
+getLocalStream=(stream)=>{
+  stream.getTracks().forEach(track => {
+    console.log("Adding tracks");
+    pc.addTrack(track, stream);
+  });
+}
+
 
 start = () => {
 
@@ -77,13 +84,6 @@ start = () => {
     window.alert(err);
   });
 
-}
-
-getLocalStream=(stream)=>{
-  stream.getTracks().forEach(track => {
-    console.log("Adding tracks");
-    pc.addTrack(track, stream);
-  });
 }
 
 start();
@@ -180,7 +180,7 @@ pc.ontrack = (event) => {
   console.log("On track");
   //console.log(event); 
   if (video2.srcObject) return;
-  //console.log("Video 2 is set ______");
+  console.log("Video 2 is set ______");
   video2.srcObject = event.streams[0];
 }
 
