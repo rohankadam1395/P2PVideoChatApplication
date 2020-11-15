@@ -43,9 +43,15 @@ io.on('connection',(socket)=>{
         if(io.sockets.adapter.rooms[room]){
             console.log(io.sockets.adapter.rooms[room].length);
             count=io.sockets.adapter.rooms[room].length;
+            console.log("Count");
+            console.log(count);
         }
 if(count<2){
     socket.join(room);
+    if(count==1){
+        console.log("Two people hae joined");
+        socket.to(room).emit("twojoined",true);
+    }
 
 }else{
     socket.emit("cantjoin","Room is Full");
@@ -90,14 +96,14 @@ socket.emit("chat message","Talking with yourself ? Join a room");
 
     });
 
-let cand=[];
+// let cand=[];
     socket.on('candidate',(id,candidate)=>{
         
         console.log("Cndidate Received on server now enitting");
         // socket.broadcast.emit(candidate);
-        console.log(candidate);
-        cand.push(candidate);   
-        console.log(cand.length);
+        // console.log(candidate);
+        // cand.push(candidate);   
+        // console.log(cand.length);
         socket.to(id).emit('candidate',candidate);
 
     });

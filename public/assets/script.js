@@ -23,9 +23,37 @@ promptRoom = () => {
   return room;
 }
 
+
+
+createSendOffer=()=>{
+  console.log("Create and Send Offer");
+
+  pc.createOffer().then((e) => {
+    // console.log("Offer Cretaed");
+    // console.log(e);
+
+    pc.setLocalDescription(e).then(() => {
+      // console.log("After Setting Local Description");
+      // console.log(pc);
+      console.log("Local description set Not Ice candidate should start");
+        socket.emit('offer', room,pc.localDescription);
+      
+    });
+
+  }).catch((err)=>{
+    console.log(err);
+  });
+
+}
+
+
+
+
 start = () => {
 
   console.log("start");
+
+
 
   navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
 
@@ -39,21 +67,24 @@ start = () => {
 
     socket.emit("room", room);
 
-    // window.stream = stream;
-    //console.log(stream);
-    stream.getTracks().forEach(track => {
-      console.log("Adding tracks");
-      pc.addTrack(track, stream);
-    });
-    // console.log(video);
-    // console.log(stream);
+    getLocalStream(stream);
+
     video.srcObject = stream;
+// window.stream=stream;
+
+
   }).catch((err) => {
     window.alert(err);
   });
 
 }
 
+getLocalStream=(stream)=>{
+  stream.getTracks().forEach(track => {
+    console.log("Adding tracks");
+    pc.addTrack(track, stream);
+  });
+}
 
 start();
 
@@ -111,26 +142,27 @@ return ;
 
 pc.onnegotiationneeded = () => {
 
+  // createSendOffer
+
 
   console.log("Negotiation needed");
-  
-  pc.createOffer().then((e) => {
-    // console.log("Offer Cretaed");
-    // console.log(e);
-    pc.setLocalDescription(e).then(() => {
-      // console.log("After Setting Local Description");
-      // console.log(pc);
-      console.log("Local description set Not Ice candidate should start");
-        socket.emit('offer', room, e);
-      
-    });
-  }).catch((err)=>{
-    console.log(err);
-  })
+  // createSendOffer();
+
+
 
 }
 
 
+pc.onconnectionstatechange=()=>{
+  console.log("State");
+  console.log(pc.connectionState);
+  if(pc.connectionState==='disconnected'){
+    console.log("Disconncted");
+    video2.srcObject=null;
+
+  }
+
+}
 
 
 
@@ -170,7 +202,6 @@ socket.on('offer', (offer) => {
 
   // if(!pc.remoteDescription){
 
-if(!pc.remoteDescription){
 
   pc.setRemoteDescription(offer).then(() => {
 
@@ -193,7 +224,7 @@ if(!pc.remoteDescription){
           // console.log(pc);
           console.log("Emitting the Answer");
   
-          socket.emit('answer', room, e);
+          socket.emit('answer', room,pc.localDescription);
   
         });
 
@@ -207,7 +238,7 @@ if(!pc.remoteDescription){
 
   });
 
-}
+
 
   // }else{
   //   console.log("Remote Description Already Set in offer Received");
@@ -221,7 +252,6 @@ socket.on('answer', (answer) => {
   // console.log("Setting Remote Description as answer");
   // console.log(pc);
 
-  if(!pc.remoteDescription){
 
   pc.setRemoteDescription(answer).then(() => {
     console.log("Affter Setting Remote Description");
@@ -231,7 +261,7 @@ socket.on('answer', (answer) => {
     //console.log(err);
   });
 
-}
+
   // }else{
   //   console.log("Remote Description Already Set in the Anser Received")
   // }
@@ -247,6 +277,13 @@ socket.on('candidate',  (candidate) => {
 
   }
 );
+
+socket.on("twojoined",(val)=>{
+  console.log("There are two people now");
+
+  createSendOffer();
+
+});
 
 
 
