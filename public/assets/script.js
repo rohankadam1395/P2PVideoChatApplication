@@ -27,7 +27,6 @@ promptRoom = () => {
 
 createSendOffer=()=>{
   console.log("Create and Send Offer");
-
   pc.createOffer().then((e) => {
     // console.log("Offer Cretaed");
     // console.log(e);
@@ -139,14 +138,20 @@ return ;
   socket.emit('candidate', room,candidate);
 
 };
-
+let negotiating;
 pc.onnegotiationneeded = () => {
+if(negotiating){
+  console.log("!!!!!Already Negotiating");
+  return ;
+}
 
+negotiating=true;
   // createSendOffer
-
-
+console.log(pc);
+pc.localDescription=null;
+pc.remoteDescription=null;
   console.log("Negotiation needed");
-  // createSendOffer();
+  createSendOffer();
 
 
 
@@ -159,8 +164,9 @@ pc.onconnectionstatechange=()=>{
   if(pc.connectionState==='disconnected'){
     console.log("Disconncted");
     video2.srcObject=null;
-    pc.localDescription=null;
-    pc.remoteDescription=null;
+    // pc.close();
+    // pc.localDescription=null;
+    // pc.remoteDescription=null;
 
   }
 
@@ -180,8 +186,8 @@ stop.onclick = () => {
 
 pc.ontrack = (event) => {
   console.log("On track");
-  //console.log(event); 
-  if (video2.srcObject) return;
+  console.log(event); 
+  // if (video2.srcObject) return;
   console.log("Video 2 is set ______");
   video2.srcObject = event.streams[0];
 }
@@ -200,12 +206,16 @@ socket.on("cantjoin", (msg) => {
 })
 socket.on('offer', (offer) => {
   console.log("Got Offer From Server");
-  // console.log(offer);
+  // console.log(offer.sdp);
 
   // if(!pc.remoteDescription){
+// console.log(pc);
+// if(pc.connectionState==='closed'){
+//   pc=new RTCPeerConnection();
+// }
+// console.log(pc);
 
-
-  pc.setRemoteDescription(offer).then(() => {
+  pc.setRemoteDescription(offer).then(() => { 
 
     console.log("Remote Description Set");
     // console.log(pc);
@@ -216,14 +226,15 @@ socket.on('offer', (offer) => {
       stream.getTracks().forEach((track) => {
         console.log("Addng tracks");
         pc.addTrack(track, stream);
-      });
+      }); 
 
       pc.createAnswer().then((e) => {
         // console.log("Answer Created");
         // console.log(e);
         pc.setLocalDescription(e).then(() => {
-          // console.log("Local Description Set");
+          console.log("Local Description Set");
           // console.log(pc);
+         
           console.log("Emitting the Answer");
   
           socket.emit('answer', room,pc.localDescription);
@@ -238,10 +249,12 @@ socket.on('offer', (offer) => {
 
     
 
+  }).catch((err)=>{
+    console.log(err);
   });
 
 
-
+  
   // }else{
   //   console.log("Remote Description Already Set in offer Received");
   // }
@@ -254,7 +267,7 @@ socket.on('answer', (answer) => {
   // console.log("Setting Remote Description as answer");
   // console.log(pc);
 
-
+// if(!pc.remoteDescription){
   pc.setRemoteDescription(answer).then(() => {
     console.log("Affter Setting Remote Description");
 
@@ -262,7 +275,7 @@ socket.on('answer', (answer) => {
   }).catch((err) => {
     //console.log(err);
   });
-
+// }
 
   // }else{
   //   console.log("Remote Description Already Set in the Anser Received")
@@ -275,6 +288,8 @@ socket.on('candidate',  (candidate) => {
   if(pc.remoteDescription){
       pc.addIceCandidate(candidate);
 
+  }else{
+    console.log("Remote Description not set and you are adding ice candidates");
   }
 
   }
@@ -283,7 +298,7 @@ socket.on('candidate',  (candidate) => {
 socket.on("twojoined",(val)=>{
   console.log("There are two people now");
 
-  createSendOffer();
+  // createSendOffer();
 
 });
 

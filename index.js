@@ -50,7 +50,7 @@ if(count<2){
     socket.join(room);
     if(count==1){
         console.log("Two people hae joined");
-        socket.to(room).emit("twojoined",true);
+        io.to(room).emit("twojoined",true);
     }
 
 }else{
