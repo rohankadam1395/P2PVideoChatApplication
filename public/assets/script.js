@@ -140,6 +140,8 @@ return ;
 };
 let negotiating;
 pc.onnegotiationneeded = () => {
+  console.log("Negotiation needed");
+
 if(negotiating){
   console.log("!!!!!Already Negotiating");
   return ;
@@ -147,10 +149,9 @@ if(negotiating){
 
 negotiating=true;
   // createSendOffer
-console.log(pc);
-pc.localDescription=null;
-pc.remoteDescription=null;
-  console.log("Negotiation needed");
+// console.log(pc);
+// pc.localDescription=null;
+// pc.remoteDescription=null;
   createSendOffer();
 
 
@@ -163,7 +164,8 @@ pc.onconnectionstatechange=()=>{
   console.log(pc.connectionState);
   if(pc.connectionState==='disconnected'){
     console.log("Disconncted");
-    video2.srcObject=null;
+    // video2.srcObject=null;
+    // createSendOffer();
     // pc.close();
     // pc.localDescription=null;
     // pc.remoteDescription=null;
