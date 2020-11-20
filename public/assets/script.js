@@ -12,7 +12,7 @@ let configuration = {
     }
   ]
 }
-let pc = new RTCPeerConnection();
+let pc = new RTCPeerConnection(configuration);
 var socket = io();
 let room = "";
 //console.log("new pc created");
