@@ -1,5 +1,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
+let state=document.getElementById("state");
+state.innerText="Not Yet Connected";
 
 let capturevideo = document.getElementById("captureVideo");
 let stop = document.getElementById("stop");
@@ -59,16 +61,19 @@ start = () => {
 
   console.log("start");
 
-
+state.innerText="Getting Stream from Camera";
 
   navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
 
-    room = promptRoom();
+    // room = promptRoom();
     console.log(room + " room");
-    while (room == null || room == "") {
+     while (room == null || room == "") {
       console.log("Enter Room no");
-      window.alert("Empty Not Allowed");
       room = promptRoom();
+if(!room){
+  window.alert("Empty Not Allowed");
+
+}
     }
 
     socket.emit("room", room);
@@ -143,6 +148,7 @@ pc.onnegotiationneeded = () => {
   console.log("Negotiation needed");
 
 if(negotiating){
+  state.innerText="!!!!!Already Negotiating";
   console.log("!!!!!Already Negotiating");
   return ;
 }
@@ -152,6 +158,7 @@ negotiating=true;
 // console.log(pc);
 // pc.localDescription=null;
 // pc.remoteDescription=null;
+state.innerText="Negotiating,Share the Room ID to another User";
   createSendOffer();
 
 
@@ -162,6 +169,8 @@ negotiating=true;
 pc.onconnectionstatechange=()=>{
   console.log("State");
   console.log(pc.connectionState);
+  state.innerText=pc.connectionState;
+
   if(pc.connectionState==='disconnected'){
     console.log("Disconncted");
     // video2.srcObject=null;
@@ -178,6 +187,7 @@ pc.onconnectionstatechange=()=>{
 
 stop.onclick = () => {
   let stream=video.srcObject;
+  state.innerText="Camera Stream Stopped";
   stream.getTracks().forEach((track) => {
     track.stop();
   })
