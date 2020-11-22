@@ -7,6 +7,8 @@ let capturevideo = document.getElementById("captureVideo");
 let stop = document.getElementById("stop");
 let video2 = document.getElementById("video2");
 let video = document.getElementById("video");
+let negotiating;
+
 let configuration = {
   'iceServers': [
     {
@@ -14,7 +16,7 @@ let configuration = {
     }
   ]
 }
-let pc = new RTCPeerConnection(configuration);
+let pc = null;
 var socket = io();
 let room = "";
 //console.log("new pc created");
@@ -58,8 +60,77 @@ getLocalStream=(stream)=>{
 
 
 start = () => {
+pc=new RTCPeerConnection(configuration);
 
+pc.ontrack = (event) => {
+  console.log("On track");
+  console.log(event); 
+  // if (video2.srcObject) return;
+  console.log("Video 2 is set ______");
+  video2.srcObject = event.streams[0];
+}
+
+
+pc.onicecandidate = (event) => {
+  console.log("Ice Candidate");
+  // console.log(event.candidate);
+  let candidate=event.candidate;
+  if(!candidate){
+    console.log("All Candidates Generated ");
+    console.log("****************");
+return ;
+  }
+//Emit candidates when other person has joined the room
+  socket.emit('candidate', room,candidate);
+
+};
+
+
+pc.onnegotiationneeded = () => {
+  console.log("Negotiation needed");
+
+if(negotiating){
+  state.innerText="!!!!!Already Negotiating";
+  console.log("!!!!!Already Negotiating");
+  return ;
+}
+
+negotiating=true;
+  // createSendOffer
+// console.log(pc);
+// pc.localDescription=null;
+// pc.remoteDescription=null;
+state.innerText="Negotiating,Share the Room ID to another User";
+  createSendOffer();
+
+
+
+}
+
+
+pc.onconnectionstatechange=()=>{
+  console.log("State");
+  console.log(pc.connectionState);
+  state.innerText=pc.connectionState;
+
+  if(pc.connectionState==='disconnected'|| pc.connectionState==="failed"){
+    console.log("Disconncted");
+    negotiating=false;
+
+    // video2.srcObject=null;
+    // createSendOffer();
+    // pc.close();
+    // pc.localDescription=null;
+    // pc.remoteDescription=null;
+
+  }
+
+}
+
+//********************************* */
+// room="";
   console.log("start");
+
 
 state.innerText="Getting Stream from Camera";
 
@@ -67,16 +138,22 @@ state.innerText="Getting Stream from Camera";
 
     // room = promptRoom();
     console.log(room + " room");
+
      while (room == null || room == "") {
       console.log("Enter Room no");
       room = promptRoom();
 if(!room){
   window.alert("Empty Not Allowed");
 
+}else{
+  socket.emit("room", room);
+
 }
     }
 
-    socket.emit("room", room);
+
+    
+
 
     getLocalStream(stream);
 
@@ -87,6 +164,11 @@ if(!room){
   }).catch((err) => {
     window.alert(err);
   });
+
+
+
+
+
 
 }
 
@@ -130,83 +212,121 @@ socket.on('chat message', (msg) => {
 
 // ***********************************************************************
 // let cands=[];
-pc.onicecandidate = (event) => {
-  console.log("Ice Candidate");
-  // console.log(event.candidate);
-  let candidate=event.candidate;
-  if(!candidate){
-    console.log("All Candidates Generated ");
-    console.log("****************");
-return ;
-  }
-//Emit candidates when other person has joined the room
-  socket.emit('candidate', room,candidate);
 
-};
-let negotiating;
-pc.onnegotiationneeded = () => {
-  console.log("Negotiation needed");
+// pc.onicecandidate = (event) => {
+//   console.log("Ice Candidate");
+//   // console.log(event.candidate);
+//   let candidate=event.candidate;
+//   if(!candidate){
+//     console.log("All Candidates Generated ");
+//     console.log("****************");
+// return ;
+//   }
+// //Emit candidates when other person has joined the room
+//   socket.emit('candidate', room,candidate);
 
-if(negotiating){
-  state.innerText="!!!!!Already Negotiating";
-  console.log("!!!!!Already Negotiating");
-  return ;
-}
-
-negotiating=true;
-  // createSendOffer
-// console.log(pc);
-// pc.localDescription=null;
-// pc.remoteDescription=null;
-state.innerText="Negotiating,Share the Room ID to another User";
-  createSendOffer();
+// };
 
 
+// let negotiating;
+// pc.onnegotiationneeded = () => {
+//   console.log("Negotiation needed");
 
-}
+// if(negotiating){
+//   state.innerText="!!!!!Already Negotiating";
+//   console.log("!!!!!Already Negotiating");
+//   return ;
+// }
 
-
-pc.onconnectionstatechange=()=>{
-  console.log("State");
-  console.log(pc.connectionState);
-  state.innerText=pc.connectionState;
-
-  if(pc.connectionState==='disconnected'){
-    console.log("Disconncted");
-    // video2.srcObject=null;
-    // createSendOffer();
-    // pc.close();
-    // pc.localDescription=null;
-    // pc.remoteDescription=null;
-
-  }
-
-}
+// negotiating=true;
+//   // createSendOffer
+// // console.log(pc);
+// // pc.localDescription=null;
+// // pc.remoteDescription=null;
+// state.innerText="Negotiating,Share the Room ID to another User";
+//   createSendOffer();
 
 
 
-stop.onclick = () => {
+// }
+
+
+// pc.onconnectionstatechange=()=>{
+//   console.log("State");
+//   console.log(pc.connectionState);
+//   state.innerText=pc.connectionState;
+
+//   if(pc.connectionState==='disconnected'|| pc.connectionState==="failed"){
+//     console.log("Disconncted");
+//     negotiating=false;
+
+//     // video2.srcObject=null;
+//     // createSendOffer();
+//     // pc.close();
+//     // pc.localDescription=null;
+//     // pc.remoteDescription=null;
+
+//   }
+
+// }
+
+socket.on("close",(flag)=>{
+  console.log("Close Called");
+  
   let stream=video.srcObject;
   state.innerText="Camera Stream Stopped";
   stream.getTracks().forEach((track) => {
+  
     track.stop();
-  })
+
+  });
+
+  pc.close();
+})
+
+stop.onclick =async () => {
+  negotiating=false;
+
+
+//   let senders= await pc.getSenders();
+//   console.log(senders);
+//   senders.forEach((sender)=>{
+// pc.removeTrack(sender);
+//   });
+//   pc.localDescription=null;
+socket.emit("close",room);
+
+  // socket.emit("leaveroom",room);
+
+  // pc.close();
+
+  // pc.removeTrack();
 }
 
 
 
 
-pc.ontrack = (event) => {
-  console.log("On track");
-  console.log(event); 
-  // if (video2.srcObject) return;
-  console.log("Video 2 is set ______");
-  video2.srcObject = event.streams[0];
-}
+// pc.ontrack = (event) => {
+//   console.log("On track");
+//   console.log(event); 
+//   // if (video2.srcObject) return;
+//   console.log("Video 2 is set ______");
+//   video2.srcObject = event.streams[0];
+// }
 
+socket.on("start",(flag)=>{
+  start();
+
+  // if(!negotiating){
+  //   createSendOffer();
+
+  // }
+
+});
 
 capturevideo.onclick = () => {
-  start();
+  socket.emit("start",room);
+  // start();
 
 
 }
@@ -215,7 +335,8 @@ capturevideo.onclick = () => {
 socket.on("cantjoin", (msg) => {
   console.log(msg);
   window.alert(msg);
-})
+});
+
 socket.on('offer', (offer) => {
   console.log("Got Offer From Server");
   // console.log(offer.sdp);
@@ -310,7 +431,11 @@ socket.on('candidate',  (candidate) => {
 socket.on("twojoined",(val)=>{
   console.log("There are two people now");
 
-  // createSendOffer();
+  console.log(negotiating);
+  if(!negotiating){
+  createSendOffer();
+
+  }
 
 });
 
